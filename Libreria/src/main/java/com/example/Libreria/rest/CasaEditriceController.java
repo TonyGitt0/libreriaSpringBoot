@@ -19,6 +19,8 @@ import io.github.resilience4j.bulkhead.annotation.Bulkhead;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
 import io.micrometer.core.instrument.util.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 
 /**
@@ -39,7 +41,7 @@ public class CasaEditriceController {
 	@Autowired
 	private CasaEditriceService caseEditriciService;
 	
-	
+	private Logger logger = LogManager.getLogger(CasaEditriceController.class);
 	
 	/**
 	 * @param {CasaEditriceDTO} CasaEditriceDTO da inserire
@@ -74,13 +76,13 @@ public class CasaEditriceController {
 			result.setData(resultCasaEditrice)
 			.success(HttpStatus.SC_OK)
 			.setDescrizione("Operazione avvenuta con successo");
-			
+			logger.info("L'inserimento di una Casa Editrice è avvenuta con successo.");
 			return CompletableFuture.completedFuture(ResponseEntity.status(HttpStatus.SC_OK).body(result));
 		}
 		result.setData(null)
 		.success(HttpStatus.SC_BAD_REQUEST)
 		.setDescrizione("Operazione non avvenuta con successo");
-		
+		logger.error("L'insermento di una Casa Editrice non è avvenuta con successo.");
 		return  CompletableFuture.completedFuture(ResponseEntity.status(HttpStatus.SC_BAD_REQUEST).body(result));
 	}
 	/**
@@ -94,7 +96,7 @@ public class CasaEditriceController {
 		result.setData(null)
 		.success(HttpStatus.SC_GATEWAY_TIMEOUT)
 		.setDescrizione("Tempo scaduto, non è possibile inserire una Casa Editrice");
-		
+		logger.error("Fallback: qualcosa è andato storto!.");
 		return  CompletableFuture.completedFuture(ResponseEntity.status(HttpStatus.SC_GATEWAY_TIMEOUT).body(result));
 	}
 	
@@ -133,13 +135,13 @@ public class CasaEditriceController {
 			result.setData(null)
 			.success(HttpStatus.SC_BAD_REQUEST)
 			.setDescrizione("Operazione non avvenuta con successo");
-			
+			logger.error("L'operazione per ottenere tutte le Case Editrici non è avvenuta con successo.");
 			return  CompletableFuture.completedFuture(ResponseEntity.status(HttpStatus.SC_BAD_REQUEST).body(result));
 		}
 		result.setData(resultCase)
 		.success(HttpStatus.SC_OK)
 		.setDescrizione("Operazione avvenuta con successo");
-		
+		logger.info("L'operazione per ottenere tutte le Case Editrici è avvenuta con successo.");
 		return CompletableFuture.completedFuture(ResponseEntity.status(HttpStatus.SC_OK).body(result));
 	}
 	
@@ -153,7 +155,7 @@ public class CasaEditriceController {
 		result.setData(null)
 		.success(HttpStatus.SC_GATEWAY_TIMEOUT)
 		.setDescrizione("Tempo scaduto, non è possibile visualizzare tutte le Case Editrici");
-		
+		logger.error("Fallback: qualcosa è andato storto!.");
 		return  CompletableFuture.completedFuture(ResponseEntity.status(HttpStatus.SC_GATEWAY_TIMEOUT).body(result));
 	}
 	
@@ -196,14 +198,14 @@ public class CasaEditriceController {
 				result.setData(resultCasaEditrice)
 				.success(HttpStatus.SC_OK)
 				.setDescrizione("Operazione avvenuta con successo");
-				
+				logger.info("L'aggironamento della Casa Editrice è avvenuto con successo.");
 				return CompletableFuture.completedFuture(ResponseEntity.status(HttpStatus.SC_OK).body(result));
 			}
 		}
 		result.setData(null)
 		.success(HttpStatus.SC_BAD_REQUEST)
 		.setDescrizione("Operazione non avvenuta con successo");
-		
+		logger.error("L'aggironamento della Casa Editrice non è avvenuto con successo.");
 		return CompletableFuture.completedFuture(ResponseEntity.status(HttpStatus.SC_BAD_REQUEST).body(result));
 	}
 	/**
@@ -219,7 +221,7 @@ public class CasaEditriceController {
 		result.setData(null)
 		.success(HttpStatus.SC_GATEWAY_TIMEOUT)
 		.setDescrizione("Tempo scaduto, non è possibile aggiornare una Casa Editrice");
-		
+		logger.error("Fallback: qualcosa è andato storto!.");
 		return  CompletableFuture.completedFuture(ResponseEntity.status(HttpStatus.SC_GATEWAY_TIMEOUT).body(result));
 	}
 	
@@ -252,17 +254,16 @@ public class CasaEditriceController {
 		RisultatoDTO<List<CasaEditriceDTO>> result = new  RisultatoDTO<List<CasaEditriceDTO>>();
 		List<CasaEditriceDTO> resultCasaEditriceDTO = caseEditriciService.findCasaEditriceByNome(nome);
 		if(!StringUtils.isBlank(nome) && !resultCasaEditriceDTO.isEmpty()) {
-			
 			result.setData(resultCasaEditriceDTO)
 			.success(HttpStatus.SC_OK)
 			.setDescrizione("Operazione avvenuta con successo");
-			
+			logger.info("L'operazione FindByNome avvenuta con successo.");
 			return CompletableFuture.completedFuture(ResponseEntity.status(HttpStatus.SC_OK).body(result));
 		}
 		result.setData(null)
 		.success(HttpStatus.SC_BAD_REQUEST)
 		.setDescrizione("Operazione non avvenuta con successo, nome CasaEditrice non esistente");
-		
+		logger.error("Loperazione FindByNome non è avvenuta con successo.");
 		return CompletableFuture.completedFuture(ResponseEntity.status(HttpStatus.SC_BAD_REQUEST).body(result));	
 	}
 	/**
@@ -277,7 +278,7 @@ public class CasaEditriceController {
 		result.setData(null)
 		.success(HttpStatus.SC_GATEWAY_TIMEOUT)
 		.setDescrizione("Tempo scaduto, non è possibile visualizzare tutte le Case Editrici con il nome selezionato");
-		
+		logger.error("Fallback:qualcosa è andato storto!.");
 		return  CompletableFuture.completedFuture(ResponseEntity.status(HttpStatus.SC_GATEWAY_TIMEOUT).body(result));
 	}
 	
@@ -314,7 +315,7 @@ public class CasaEditriceController {
 		result.setData(null)
 		.success(HttpStatus.SC_OK)
 		.setDescrizione("Eliminazione avvenuta con successo");
-		
+		logger.info("Eliminazione Casa Editrice avvenuta con successo.");
 		return CompletableFuture.completedFuture(ResponseEntity.status(HttpStatus.SC_OK).body(result));
 	}
 	/**
@@ -329,7 +330,7 @@ public class CasaEditriceController {
 		result.setData(null)
 		.success(HttpStatus.SC_GATEWAY_TIMEOUT)
 		.setDescrizione("Tempo scaduto, non è possibile elimanare la Casa Editrice desiderata");
-		
+		logger.error("Fallback: qualcosa è andato storto!.");
 		return CompletableFuture.completedFuture(ResponseEntity.status(HttpStatus.SC_OK).body(result));
 	}
 	

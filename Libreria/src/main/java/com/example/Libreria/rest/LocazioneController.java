@@ -21,6 +21,9 @@ import io.github.resilience4j.bulkhead.annotation.Bulkhead.Type;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
 import io.micrometer.core.instrument.util.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 /**
  * @author AF
@@ -39,7 +42,8 @@ public class LocazioneController {
 	private LocazioneService locazioneService;
 	@Autowired
 	private utilLocazione utilLocazione;
-
+	
+	private Logger logger = LogManager.getLogger(LocazioneController.class);
 	
 	/**
 	 * @return {CompletableFuture<ResponseEntity<RisultatoDTO<List<LocazioneDTO>>>>} 
@@ -68,15 +72,15 @@ public class LocazioneController {
 		if(resultLitLocazione != null ) {
 			
 			result.setData(resultLitLocazione)
-			.success(HttpStatus.SC_OK
-					).setDescrizione("Operazione avvnuta con successo");
-			
+			.success(HttpStatus.SC_OK)
+			.setDescrizione("Operazione avvnuta con successo");
+			logger.info("Operazione che ritorna tutte le locazioni avvenuta con successo.");
 			return CompletableFuture.completedFuture(ResponseEntity.status(HttpStatus.SC_OK).body(result));
 		}
 		result.setData(null)
 		.success(HttpStatus.SC_BAD_REQUEST)
 		.setDescrizione("Operazione non avvenuta con successo, inserire correttamente i dati");
-		
+		logger.error("Operazione che ritorna tutte le locazioni non avvenuta con successo.");
 		return CompletableFuture.completedFuture(ResponseEntity.status(HttpStatus.SC_BAD_REQUEST).body(result));
 	}
 	
@@ -89,7 +93,7 @@ public class LocazioneController {
 		result.setData(null)
 		.success(HttpStatus.SC_GATEWAY_TIMEOUT)
 		.setDescrizione("Tempo scaduto, non è possibile visualizzare la lista delle Locazioni");
-		
+		logger.error("Fallback:qualcosa è andato storto!.");
 		return  CompletableFuture.completedFuture(ResponseEntity.status(HttpStatus.SC_GATEWAY_TIMEOUT).body(result));
 	}
 
@@ -126,13 +130,13 @@ public class LocazioneController {
 			result.setData(resultLocazioneDTO)
 			.success(HttpStatus.SC_OK)
 			.setDescrizione("Operazione avvenuta con successo");
-			
+			logger.info("Inserimento locazione avvenuto con successo.");
 			return  CompletableFuture.completedFuture(ResponseEntity.status(HttpStatus.SC_OK).body(result));
 		}
 		result.setData(null)
 		.success(HttpStatus.SC_BAD_REQUEST)
 		.setDescrizione("Operazione non avvenuta con successo, inserire correttamente i dati");
-		
+		logger.error("Inserimento locazione non avvenuto con successo.");
 		return CompletableFuture.completedFuture(ResponseEntity.status(HttpStatus.SC_BAD_REQUEST).body(result));
 	}
 	
@@ -148,7 +152,7 @@ public class LocazioneController {
 		result.setData(null).
 		success(HttpStatus.SC_GATEWAY_TIMEOUT)
 		.setDescrizione("Tempo scaduto, non è possibile inserire una locazione");
-		
+		logger.error("Fallback:qualcosa è andato storto!.");
 		return CompletableFuture.completedFuture(ResponseEntity.status(HttpStatus.SC_GATEWAY_TIMEOUT).body(result));
 	}
 	
@@ -187,14 +191,14 @@ public class LocazioneController {
 				result.setData(resultLocazioneDAO)
 				.success(HttpStatus.SC_OK)
 				.setDescrizione("Operazione avvenuta con successo");
-				
+				logger.info("Aggiornamneto locazione avvenuto con successo.");
 				return CompletableFuture.completedFuture(ResponseEntity.status(HttpStatus.SC_OK).body(result));
 			}
 		}
 		result.setData(null)
 		.success(HttpStatus.SC_BAD_REQUEST)
 		.setDescrizione("Operazione non avvenuta con successo, inserire correttamente i dati");
-		
+		logger.error("Aggiornamneto locazione non avvenuto con successo.");
 		return  CompletableFuture.completedFuture(ResponseEntity.status(HttpStatus.SC_BAD_REQUEST).body(result));
 	}
 	
@@ -211,7 +215,7 @@ public class LocazioneController {
 		result.setData(null)
 		.success(HttpStatus.SC_GATEWAY_TIMEOUT)
 		.setDescrizione("Tempo scaduto, non è possibile aggiornare una locazione");
-		
+		logger.error("Fallback:qualcosa è andato storto!.");
 		return CompletableFuture.completedFuture(ResponseEntity.status(HttpStatus.SC_GATEWAY_TIMEOUT).body(result));
 	}
 	
@@ -246,7 +250,7 @@ public class LocazioneController {
 		result.setData(null)
 		.success(HttpStatus.SC_GATEWAY_TIMEOUT)
 		.setDescrizione("Eliminazion avvenuta con successo");
-		
+		logger.info("Eliminazione locazione avvenuta con successo.");
 		return CompletableFuture.completedFuture(ResponseEntity.status(HttpStatus.SC_OK).body(result));
 	}
 	
@@ -262,7 +266,7 @@ public class LocazioneController {
 		result.setData(null)
 		.success(HttpStatus.SC_GATEWAY_TIMEOUT)
 		.setDescrizione("Tempo scaduto, non è possibile eliminare la Locazione indicata");
-		
+		logger.error("Fallback:qualcosa è andato storto!.");
 		return CompletableFuture.completedFuture(ResponseEntity.status(HttpStatus.SC_GATEWAY_TIMEOUT).body(result));
 	}
 	

@@ -3,9 +3,7 @@ package com.example.Libreria.rest;
 import java.sql.Date;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-
 import javax.transaction.Transactional;
-
 import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +20,10 @@ import io.github.resilience4j.bulkhead.annotation.Bulkhead.Type;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
 import io.micrometer.core.instrument.util.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+
 
 /**
  * @author AF
@@ -41,6 +43,8 @@ public class LibroController {
 	
 	@Autowired
 	private LibroService libroService;
+	
+	private Logger logger = LogManager.getLogger(CasaEditriceController.class);
 	
 	/**
 	 * @param {LibroDTO} libroDTO da inserire
@@ -76,14 +80,14 @@ public class LibroController {
 				result.setData(resultLibroDTO)
 				.success(HttpStatus.SC_OK)
 				.setDescrizione("Operazione avvenuta con successo");
-				
+				logger.info("L'inserimento di un Libro avvenuto con successo.");
 				return  CompletableFuture.completedFuture(ResponseEntity.status(HttpStatus.SC_OK).body(result));
 			}
 		}
 		result.setData(null)
 		.success(HttpStatus.SC_BAD_REQUEST)
 		.setDescrizione("Operazione non avvenuta con successo, inserire correttamente i campi");
-		
+		logger.error("L'inserimento di un Libro nome è avvenuta con successo.");
 		return  CompletableFuture.completedFuture(ResponseEntity.status(HttpStatus.SC_BAD_REQUEST).body(result));
 	}
 	/**
@@ -97,7 +101,7 @@ public class LibroController {
 		result.setData(null)
 		.success(HttpStatus.SC_GATEWAY_TIMEOUT)
 		.setDescrizione("Tempo scaduto, non è possibile inserire un nuovo Libro");
-		
+		logger.error("Fallback:qualcosa è andato storto!.");
 		return  CompletableFuture.completedFuture(ResponseEntity.status(HttpStatus.SC_GATEWAY_TIMEOUT).body(result));
 	}
 	
@@ -132,13 +136,13 @@ public class LibroController {
 			result.setData(null)
 			.success(HttpStatus.SC_BAD_REQUEST)
 			.setDescrizione("Operazione non avvenuta con successo, non è possibile reperire tutti gli autori");
-			
+			logger.error("Operazione che ritorna tutti i libri non avvenuta con successso.");
 			return CompletableFuture.completedFuture(ResponseEntity.status(HttpStatus.SC_BAD_REQUEST).body(result));
 		}
 		result.setData(libri)
 		.success(HttpStatus.SC_OK)
 		.setDescrizione("Operazione avvenuta con successo");
-		
+		logger.info("Operazione che ritorna tutti i libri avvenuta con successso.");
 		return CompletableFuture.completedFuture(ResponseEntity.status(HttpStatus.SC_OK).body(result));
 	}
 	/**
@@ -151,7 +155,7 @@ public class LibroController {
 		result.setData(null)
 		.success(HttpStatus.SC_GATEWAY_TIMEOUT)
 		.setDescrizione("Tempo scaduto, non è possibile trovare tutti i Libri");
-		
+		logger.error("Fallback:qualcosa è andato storto!.");
 		return  CompletableFuture.completedFuture(ResponseEntity.status(HttpStatus.SC_GATEWAY_TIMEOUT).body(result));
 	}
 	
@@ -197,14 +201,14 @@ public class LibroController {
 				result.setData(resultLibroDTO)
 				.success(HttpStatus.SC_OK)
 				.setDescrizione("Operazione avvenuta con successo");
-				
+				logger.info("Aggiornamento libro avvenuto con successo.");
 				return CompletableFuture.completedFuture(ResponseEntity.status(HttpStatus.SC_OK).body(result));
 			}
 		}
 		result.setData(null)
 		.success(HttpStatus.SC_BAD_REQUEST)
 		.setDescrizione("Operazione non avvenuta con successo, inserire correttamente i campi");
-		
+		logger.error("Aggiornamento libro non avvenuta con successo.");
 		return CompletableFuture.completedFuture(ResponseEntity.status(HttpStatus.SC_BAD_REQUEST).body(result));
 	}
 	/**
@@ -219,7 +223,7 @@ public class LibroController {
 		result.setData(null)
 		.success(HttpStatus.SC_GATEWAY_TIMEOUT)
 		.setDescrizione("Tempo scaduto, non è possibile aggiornare il Libro");
-		
+		logger.error("Fallback:qualcosa è andato storto!.");
 		return  CompletableFuture.completedFuture(ResponseEntity.status(HttpStatus.SC_GATEWAY_TIMEOUT).body(result));
 	}
 	
@@ -259,13 +263,13 @@ public class LibroController {
 			result.setData(resultLibroDTO)
 			.success(HttpStatus.SC_OK)
 			.setDescrizione("Operazione avvenuta con successo");
-			
+			logger.info("Operazione FindById avvenuta con successo.");
 			return CompletableFuture.completedFuture(ResponseEntity.status(HttpStatus.SC_OK).body(result));
 		}
 		result.setData(null)
 		.success(HttpStatus.SC_BAD_REQUEST)
 		.setDescrizione("Operazione non avvenuta con successo, inserire correttamenete i campi");
-		
+		logger.error("Operazione FindById non avvenuta con successo.");
 		return CompletableFuture.completedFuture(ResponseEntity.status(HttpStatus.SC_BAD_REQUEST).body(result));
 	}
 	/**
@@ -279,7 +283,7 @@ public class LibroController {
 		result.setData(null)
 		.success(HttpStatus.SC_GATEWAY_TIMEOUT)
 		.setDescrizione("Tempo scaduto, non è possibile aggiornare il Libro");
-		
+		logger.error("Fallback:qualcosa è andato storto!.");
 		return  CompletableFuture.completedFuture(ResponseEntity.status(HttpStatus.SC_GATEWAY_TIMEOUT).body(result));
 	}
 	
@@ -317,13 +321,13 @@ public class LibroController {
 			result.setData(resultLibroDTO)
 			.success(HttpStatus.SC_OK)
 			.setDescrizione("Operazione avvenuta con successo");
-			
+			logger.info("Operazione FindByTitolo avvenuta con successo.");
 			return CompletableFuture.completedFuture(ResponseEntity.status(HttpStatus.SC_OK).body(result));
 		}
 		result.setData(null)
 		.success(HttpStatus.SC_BAD_REQUEST)
-		.setDescrizione("Operazione non avvenuta con successo, inserire correttamenete i campi")
-		;
+		.setDescrizione("Operazione non avvenuta con successo, inserire correttamenete i campi");
+		logger.error("Operazione FindByTitolo non avvenuta con successo.");
 		return CompletableFuture.completedFuture(ResponseEntity.status(HttpStatus.SC_BAD_REQUEST).body(result));
 	}
 	/**
@@ -337,7 +341,7 @@ public class LibroController {
 		result.setData(null)
 		.success(HttpStatus.SC_GATEWAY_TIMEOUT)
 		.setDescrizione("Tempo scaduto, non è possibile trovare un Libro con questo titolo");
-		
+		logger.error("Fallback:qualcosa è andato storto!.");
 		return  CompletableFuture.completedFuture(ResponseEntity.status(HttpStatus.SC_GATEWAY_TIMEOUT).body(result));
 	}
 	
@@ -373,7 +377,7 @@ public class LibroController {
 		result.setData(null)
 		.success(HttpStatus.SC_GATEWAY_TIMEOUT)
 		.setDescrizione("Eliminazion avvenuta con successo");
-		
+		logger.info("Eliminazione libro avvenuta con successo.");
 		return  CompletableFuture.completedFuture(ResponseEntity.status(HttpStatus.SC_OK).body(result));
 	}
 	
@@ -388,7 +392,7 @@ public class LibroController {
 		result.setData(null)
 		.success(HttpStatus.SC_GATEWAY_TIMEOUT)
 		.setDescrizione("Tempo scaduto, non è possibile eliminare il Libro indicato");
-		
+		logger.error("Fallback:qualcosa è andato storto!.");
 		return  CompletableFuture.completedFuture(ResponseEntity.status(HttpStatus.SC_GATEWAY_TIMEOUT).body(result));
 	}
 	
@@ -421,10 +425,16 @@ public class LibroController {
 		RisultatoDTO<List<LibroDTO>> result = new RisultatoDTO<List<LibroDTO>>();
 		List<LibroDTO> resultLibriDTO =  libroService.getLibroAfterSpecificDate(dataUscita);
 		if(!resultLibriDTO.isEmpty()) {
-			result.setData(resultLibriDTO).success(HttpStatus.SC_OK).setDescrizione("Operazione avvenuta con successo");
+			result.setData(resultLibriDTO)
+			.success(HttpStatus.SC_OK)
+			.setDescrizione("Operazione avvenuta con successo");
+			logger.info("Operazione AfterSpecificDate avvenuta con successo.");
 			return CompletableFuture.completedFuture(ResponseEntity.status(HttpStatus.SC_OK).body(result));
 		}
-		result.setData(null).success(HttpStatus.SC_BAD_REQUEST).setDescrizione("Operazione non avvenuta con successo, inserire una data corretta");
+		result.setData(null)
+		.success(HttpStatus.SC_BAD_REQUEST)
+		.setDescrizione("Operazione non avvenuta con successo, inserire una data corretta");
+		logger.error("Operazione AfterSpecificDate non avvenuta con successo.");
 		return CompletableFuture.completedFuture(ResponseEntity.status(HttpStatus.SC_BAD_REQUEST).body(result));
 	}
 	
@@ -435,7 +445,12 @@ public class LibroController {
 	 */
 	public CompletableFuture<ResponseEntity<RisultatoDTO<List<LibroDTO>>>> fallbackGetLibroAfterSpecificDate(Date date, Throwable throwable){
 		RisultatoDTO<List<LibroDTO>> result = new RisultatoDTO<List<LibroDTO>>();	
-		result.setData(null).success(HttpStatus.SC_GATEWAY_TIMEOUT).setDescrizione("Tempo scaduto, non è possibile eliminare il Libro indicato");
+		
+		result.setData(null)
+		.success(HttpStatus.SC_GATEWAY_TIMEOUT)
+		.setDescrizione("Tempo scaduto, non è possibile eliminare il Libro indicato");
+		
+		logger.error("Fallback:qualcosa è andato storto!.");
 		return  CompletableFuture.completedFuture(ResponseEntity.status(HttpStatus.SC_GATEWAY_TIMEOUT).body(result));
 	}
 	
